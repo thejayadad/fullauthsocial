@@ -1,30 +1,55 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import SocialButton from "../components/SocialLogin.js";
 
+import { GoogleLogin } from '@react-oauth/google';
 
-
+import {client} from "../client.js"
 
 const Login = () => {
-const handleSocialLogin = (user) => {
-    console.log(user);
-    };
+    const navigate = useNavigate();
 
-    const handleSocialLoginFailure = (err) => {
-    console.error(err);
-    };
+    const responseMessage = (response) => {
+        localStorage.setItem('user', JSON.stringify(response.Obj));
+        console.log(response)
+        const { name, googleId, imageUrl } = response.Obj;
+        const doc = {
+          _id: googleId,
+          _type: 'user',
+          userName: name,
+          image: imageUrl,
+        };
+        client.createIfNotExists(doc).then(() => {
+          navigate('/', { replace: true });
+        });
 
+    }
+
+
+
+
+    const errorMessage = (error) => {
+        console.log(error);
+    };
   return (
     <div>Login
 
-        <SocialButton
-        provider="google"
-        onLoginSuccess={handleSocialLogin}
-        onLoginFailure={handleSocialLoginFailure}
-        clientId={process.env.GOOGLE__API_CLIENT_ID}
+    <GoogleLogin
+    clientId="29160364349-bk47uk9pra6jq5p2a35k34oh2nvmbe41.apps.googleusercontent.com"
+    render={(renderProps) => (
+        <button
+        type='button'
+        onClick={renderProps.onClick}
+        disabled={renderProps.disabled}
+
         >
-            Login with Google
-        </SocialButton>
+            Signin Google
+        </button>
+    )}
+    onSuccess={responseMessage}
+    onFalilure={errorMessage}
+    cookiePolicy="single_host_origin"
+    />
+
     </div>
   )
 }
