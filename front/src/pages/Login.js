@@ -34,7 +34,6 @@ const Login = () => {
     <div>Login
 
     <GoogleLogin
-    clientId="29160364349-bk47uk9pra6jq5p2a35k34oh2nvmbe41.apps.googleusercontent.com"
     render={(renderProps) => (
         <button
         type='button'
